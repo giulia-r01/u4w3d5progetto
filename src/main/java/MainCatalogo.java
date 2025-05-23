@@ -12,16 +12,16 @@ public class MainCatalogo {
         int scelta = -1;
         do {
             System.out.println("\n📚 Catalogo Bibliotecario");
-            System.out.println("1️⃣ Aggiungi un elemento");
-            System.out.println("2️⃣ Cerca un elemento per ISBN");
-            System.out.println("3️⃣ Rimuovi un elemento per ISBN");
-            System.out.println("4️⃣ Cerca elementi per anno di pubblicazione");
-            System.out.println("5️⃣ Cerca libri per autore");
-            System.out.println("6️⃣ Aggiorna un elemento esistente");
-            System.out.println("7️⃣ Mostra prestiti attivi per utente");
-            System.out.println("8️⃣ Mostra prestiti scaduti e non restituiti");
-            System.out.println("9️⃣ Visualizza il catalogo");
-            System.out.println("0️⃣ Esci");
+            System.out.println("1 Aggiungi un elemento");
+            System.out.println("2 Cerca un elemento per ISBN");
+            System.out.println("3 Rimuovi un elemento per ISBN");
+            System.out.println("4 Cerca elementi per anno di pubblicazione");
+            System.out.println("5 Cerca libri per autore");
+            System.out.println("6 Aggiorna un elemento esistente");
+            System.out.println("7 Mostra prestiti attivi per utente");
+            System.out.println("8 Mostra prestiti scaduti e non restituiti");
+            System.out.println("9 Visualizza il catalogo");
+            System.out.println("0 Esci");
 
             System.out.print("\nScegli un'opzione: ");
 
@@ -37,7 +37,7 @@ public class MainCatalogo {
                     case 5 -> cercaPerAutore(scanner, archivio);
                     case 6 -> aggiornaElemento(scanner, archivio);
                     case 7 -> {
-                        System.out.print("📜 Inserisci numero tessera utente: ");
+                        System.out.print("Inserisci numero tessera utente: ");
                         String numeroTessera = scanner.nextLine();
                         List<Prestito> prestiti = archivio.getPrestitiAttiviPerUtente(numeroTessera);
                         if (prestiti.isEmpty()) {
@@ -56,10 +56,10 @@ public class MainCatalogo {
                     }
                     case 9 -> archivio.stampaCatalogo();
                     case 0 -> System.out.println("Uscita dal catalogo bibliotecario.");
-                    default -> System.out.println("⚠️ Scelta non valida, riprova!");
+                    default -> System.out.println("Scelta non valida, riprova!");
                 }
             } catch (InputMismatchException e) {
-                System.out.println("❌ Carattere non consentito! Assicurati di digitare un numero. Riprova!");
+                System.out.println("Carattere non consentito! Assicurati di digitare un numero. Riprova!");
                 scanner.nextLine();
             }
         } while (scelta != 0);
@@ -68,101 +68,101 @@ public class MainCatalogo {
     }
 
     private static void aggiungiElemento(Scanner scanner, ArchivioCatalogo archivio) {
-        System.out.println("📌 Scegli tipo di elemento (1=Libro, 2=Rivista): ");
+        System.out.println("Scegli tipo di elemento (1=Libro, 2=Rivista): ");
         int tipo = scanner.nextInt();
         scanner.nextLine();
 
-        System.out.print("📖 ISBN: ");
+        System.out.print("ISBN: ");
         String isbn = scanner.nextLine();
-        System.out.print("📖 Titolo: ");
+        System.out.print("Titolo: ");
         String titolo = scanner.nextLine();
-        System.out.print("📅 Anno pubblicazione: ");
+        System.out.print("Anno pubblicazione: ");
         int anno = scanner.nextInt();
-        System.out.print("📑 Numero pagine: ");
+        System.out.print("Numero pagine: ");
         int pagine = scanner.nextInt();
         scanner.nextLine();
 
         if (tipo == 1) {
-            System.out.print("🖊️ Autore: ");
+            System.out.print("Autore: ");
             String autore = scanner.nextLine();
-            System.out.print("📚 Genere: ");
+            System.out.print("Genere: ");
             String genere = scanner.nextLine();
             archivio.aggiungiElemento(new Libro(isbn, titolo, anno, pagine, autore, genere));
         } else if (tipo == 2) {
             Rivista.Periodicita periodicita = null;
             while (periodicita == null) {
-                System.out.print("📅 Periodicità (SETTIMANALE, MENSILE, SEMESTRALE): ");
+                System.out.print("Periodicità (SETTIMANALE, MENSILE, SEMESTRALE): ");
                 String periodicitaInput = scanner.nextLine().toUpperCase();
                 try {
                     periodicita = Rivista.Periodicita.valueOf(periodicitaInput);
                 } catch (IllegalArgumentException e) {
-                    System.out.println("❌ Errore: Periodicità non valida. Riprova!");
+                    System.out.println("Errore: Periodicità non valida. Riprova!");
                 }
             }
             archivio.aggiungiElemento(new Rivista(isbn, titolo, anno, pagine, periodicita));
         } else {
-            System.out.println("⚠️ Tipo non valido!");
+            System.out.println("Tipo non valido!");
         }
     }
 
     private static void cercaPerIsbn(Scanner scanner, ArchivioCatalogo archivio) {
-        System.out.print("🔎 Inserisci ISBN da cercare: ");
+        System.out.print("Inserisci ISBN da cercare: ");
         String isbn = scanner.nextLine();
 
         ElementoCatalogo elemento = archivio.cercaPerIsbn(isbn);
         if (elemento != null) {
-            System.out.println("✅ Elemento trovato:\n" + elemento);
+            System.out.println("Elemento trovato:\n" + elemento);
         } else {
-            System.out.println("❌ Nessun elemento trovato con ISBN " + isbn);
+            System.out.println("Nessun elemento trovato con ISBN " + isbn);
         }
     }
 
     private static void rimuoviElemento(Scanner scanner, ArchivioCatalogo archivio) {
-        System.out.print("🗑️ Inserisci ISBN dell'elemento da eliminare: ");
+        System.out.print("Inserisci ISBN dell'elemento da eliminare: ");
         String isbn = scanner.nextLine();
         archivio.eliminaElemento(isbn);
     }
 
     private static void cercaPerAnno(Scanner scanner, ArchivioCatalogo archivio) {
-        System.out.print("🔎 Inserisci anno di pubblicazione da cercare: ");
+        System.out.print("Inserisci anno di pubblicazione da cercare: ");
         int anno = scanner.nextInt();
         scanner.nextLine();
 
         List<ElementoCatalogo> risultati = archivio.cercaPerAnno(anno);
         if (risultati.isEmpty()) {
-            System.out.println("❌ Nessun elemento trovato per l’anno: " + anno);
+            System.out.println("Nessun elemento trovato per l’anno: " + anno);
         } else {
             risultati.forEach(System.out::println);
         }
     }
 
     private static void cercaPerAutore(Scanner scanner, ArchivioCatalogo archivio) {
-        System.out.print("🖊️ Inserisci il nome dell'autore: ");
+        System.out.print("Inserisci il nome dell'autore: ");
         String autore = scanner.nextLine();
 
         List<Libro> risultati = archivio.cercaPerAutore(autore);
         if (risultati.isEmpty()) {
-            System.out.println("❌ Nessun libro trovato per l'autore: " + autore);
+            System.out.println("Nessun libro trovato per l'autore: " + autore);
         } else {
             risultati.forEach(System.out::println);
         }
     }
 
     private static void aggiornaElemento(Scanner scanner, ArchivioCatalogo archivio) {
-        System.out.print("🔄 Inserisci ISBN dell'elemento da aggiornare: ");
+        System.out.print("Inserisci ISBN dell'elemento da aggiornare: ");
         String isbn = scanner.nextLine();
 
         ElementoCatalogo elementoOriginale = archivio.cercaPerIsbn(isbn);
         if (elementoOriginale == null) {
-            System.out.println("❌ Errore: Nessun elemento trovato con ISBN " + isbn);
+            System.out.println("Errore: Nessun elemento trovato con ISBN " + isbn);
             return;
         }
 
-        System.out.print("🖊️ Nuovo titolo: ");
+        System.out.print("Nuovo titolo: ");
         String titolo = scanner.nextLine();
-        System.out.print("📅 Nuovo anno di pubblicazione: ");
+        System.out.print("Nuovo anno di pubblicazione: ");
         int anno = scanner.nextInt();
-        System.out.print("📑 Nuovo numero di pagine: ");
+        System.out.print("Nuovo numero di pagine: ");
         int pagine = scanner.nextInt();
         scanner.nextLine();
 

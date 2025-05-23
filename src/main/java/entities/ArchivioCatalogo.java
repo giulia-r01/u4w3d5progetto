@@ -8,18 +8,18 @@ public class ArchivioCatalogo {
     private ElementoCatalogoDao elementoCatalogoDao = new ElementoCatalogoDao();
     private PrestitoDao prestitoDao = new PrestitoDao();
 
-    // ✅ Carica dati dal database
+    // Carica dati dal database
     public List<ElementoCatalogo> caricaDatiDaDatabase() {
         return elementoCatalogoDao.getAll();
     }
 
-    // ✅ Aggiungi un elemento nel database
+    // Aggiungi un elemento nel database
     public void aggiungiElemento(ElementoCatalogo elemento) {
         elementoCatalogoDao.save(elemento);
-        System.out.println("✅ Elemento aggiunto con successo: " + elemento.getTitolo());
+        System.out.println("Elemento aggiunto con successo: " + elemento.getTitolo());
     }
 
-    // ✅ Cerca un elemento per ISBN nel database
+    // Cerca un elemento per ISBN nel database
     public ElementoCatalogo cercaPerIsbn(String isbn) {
         ElementoCatalogo elemento = elementoCatalogoDao.getById(isbn);
         if (elemento == null) {
@@ -28,12 +28,12 @@ public class ArchivioCatalogo {
         return elemento;
     }
 
-    // ✅ Cerca per titolo usando Named Query
+    // Cerca per titolo usando Named Query
     public List<ElementoCatalogo> cercaPerTitolo(String titolo) {
         return elementoCatalogoDao.cercaPerTitolo(titolo);
     }
 
-    // ✅ Cerca per anno usando Named Query
+    // Cerca per anno usando Named Query
     public List<ElementoCatalogo> cercaPerAnno(int anno) {
         return elementoCatalogoDao.cercaPerAnno(anno);
     }
