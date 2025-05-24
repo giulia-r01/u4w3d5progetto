@@ -11,7 +11,7 @@ public class MainCatalogo {
 
         int scelta = -1;
         do {
-            System.out.println("\n📚 Catalogo Bibliotecario");
+            System.out.println("\nCatalogo Bibliotecario");
             System.out.println("1 Aggiungi un elemento");
             System.out.println("2 Cerca un elemento per ISBN");
             System.out.println("3 Rimuovi un elemento per ISBN");
