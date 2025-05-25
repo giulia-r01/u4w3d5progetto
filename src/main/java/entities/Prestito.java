@@ -71,6 +71,15 @@ public class Prestito {
         this.dataInizioPrestito = dataInizioPrestito;
         this.dataRestituzionePrevista = dataInizioPrestito.plusDays(30); // ricalcolo automatico
     }
+
+    public void setDataRestituzionePrevista(LocalDate dataRestituzionePrevista) {
+        this.dataRestituzionePrevista = dataRestituzionePrevista;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public void setDataRestituzioneEffettiva(LocalDate dataRestituzioneEffettiva) {
         this.dataRestituzioneEffettiva = dataRestituzioneEffettiva;
     }

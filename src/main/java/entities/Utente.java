@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
+@NamedQuery(
+        name = "getByNumeroTessera",
+        query = "SELECT u FROM Utente u WHERE u.numeroTessera = :numeroTessera"
+)
 @Entity
 @Table(name = "utenti")
 public class Utente {

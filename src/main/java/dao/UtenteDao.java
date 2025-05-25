@@ -1,9 +1,7 @@
 package dao;
 
 import entities.Utente;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+import jakarta.persistence.*;
 
 public class UtenteDao {
     private EntityManager em;
@@ -21,6 +19,17 @@ public class UtenteDao {
 
     public Utente getById(Long id){
         return em.find(Utente.class, id);
+    }
+
+    public Utente getByNumeroTessera(String numeroTessera) {
+        try {
+            TypedQuery<Utente> query = em.createQuery(
+                    "SELECT u FROM Utente u WHERE u.numeroTessera = :numeroTessera", Utente.class);
+            query.setParameter("numeroTessera", numeroTessera);
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     public void remove(Long id){

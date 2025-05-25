@@ -1,4 +1,6 @@
 import entities.*;
+
+import java.time.LocalDate;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -7,6 +9,7 @@ public class MainCatalogo {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         ArchivioCatalogo archivio = new ArchivioCatalogo();
+
 
         int scelta = -1;
         do {
@@ -17,6 +20,7 @@ public class MainCatalogo {
             System.out.println("4 Cerca elementi per anno di pubblicazione");
             System.out.println("5 Cerca libri per autore");
             System.out.println("6 Aggiorna un elemento esistente");
+            System.out.println("10 Registra un prestito");
             System.out.println("7 Mostra prestiti attivi per utente");
             System.out.println("8 Mostra prestiti scaduti e non restituiti");
             System.out.println("9 Visualizza il catalogo");
@@ -38,6 +42,7 @@ public class MainCatalogo {
                     case 7 -> mostraPrestitiAttivi(scanner, archivio);
                     case 8 -> mostraPrestitiScaduti(archivio);
                     case 9 -> archivio.stampaCatalogo();
+                    case 10 -> registraPrestito(scanner, archivio);
                     case 0 -> System.out.println("Uscita dal catalogo bibliotecario.");
                     default -> System.out.println("Scelta non valida, riprova!");
                 }
@@ -183,6 +188,40 @@ public class MainCatalogo {
             System.out.println(e.getMessage());
         } catch (Exception e) {
             System.out.println("Errore durante l’aggiornamento: " + e.getMessage());
+        }
+    }
+
+    private static void registraPrestito(Scanner scanner, ArchivioCatalogo archivio) {
+        try {
+            System.out.print("ISBN dell’elemento da prestare: ");
+            String isbn = scanner.nextLine();
+
+            System.out.print("Numero tessera utente: ");
+            String numeroTessera = scanner.nextLine();
+
+            System.out.print("Data inizio prestito (yyyy-mm-dd): ");
+            String dataInizioStr = scanner.nextLine();
+            LocalDate dataInizio = LocalDate.parse(dataInizioStr);
+
+            System.out.print("Data restituzione prevista (yyyy-mm-dd): ");
+            String dataPrevistaStr = scanner.nextLine();
+            LocalDate dataPrevista = LocalDate.parse(dataPrevistaStr);
+
+            ElementoCatalogo elemento = archivio.cercaPerIsbn(isbn);
+            Utente utente = archivio.getUtentePerNumeroTessera(numeroTessera); // Assicurati che esista questo metodo
+
+            Prestito prestito = new Prestito();
+            prestito.setElementoPrestato(elemento);
+            prestito.setUtente(utente);
+            prestito.setDataInizioPrestito(dataInizio);
+            prestito.setDataRestituzionePrevista(dataPrevista);
+
+            archivio.registraPrestito(prestito);
+
+        } catch (ElementoNonTrovatoException e) {
+            System.out.println("Elemento non trovato: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Errore durante la registrazione del prestito: " + e.getMessage());
         }
     }
 

@@ -2,24 +2,29 @@ package entities;
 
 import dao.ElementoCatalogoDao;
 import dao.PrestitoDao;
+import dao.UtenteDao;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.TypedQuery;
+
 import java.util.List;
 
 public class ArchivioCatalogo {
     private ElementoCatalogoDao elementoCatalogoDao = new ElementoCatalogoDao();
     private PrestitoDao prestitoDao = new PrestitoDao();
+    private UtenteDao utenteDao = new UtenteDao();
 
     // Carica dati dal database
     public List<ElementoCatalogo> caricaDatiDaDatabase() {
         return elementoCatalogoDao.getAll();
     }
 
-    // Aggiungi un elemento nel database
+    // Aggiungi un elemento
     public void aggiungiElemento(ElementoCatalogo elemento) {
         elementoCatalogoDao.save(elemento);
         System.out.println("Elemento aggiunto con successo: " + elemento.getTitolo());
     }
 
-    // Cerca un elemento per ISBN nel database
+    // Cerca un elemento per ISBN
     public ElementoCatalogo cercaPerIsbn(String isbn) {
         ElementoCatalogo elemento = elementoCatalogoDao.getById(isbn);
         if (elemento == null) {
@@ -28,12 +33,12 @@ public class ArchivioCatalogo {
         return elemento;
     }
 
-    // Cerca per titolo usando Named Query
+    // Cerca per titolo
     public List<ElementoCatalogo> cercaPerTitolo(String titolo) {
         return elementoCatalogoDao.cercaPerTitolo(titolo);
     }
 
-    // Cerca per anno usando Named Query
+    // Cerca per anno
     public List<ElementoCatalogo> cercaPerAnno(int anno) {
         return elementoCatalogoDao.cercaPerAnno(anno);
     }
@@ -41,6 +46,14 @@ public class ArchivioCatalogo {
     // Cerca per autore
     public List<Libro> cercaPerAutore(String autore) {
         return elementoCatalogoDao.cercaPerAutore(autore);
+    }
+
+    //Get utente per numero tessera
+    public Utente getUtentePerNumeroTessera(String numeroTessera) {
+        UtenteDao dao = new UtenteDao();
+        Utente utente = dao.getByNumeroTessera(numeroTessera);
+        dao.close(); // chiude l'EntityManager
+        return utente;
     }
 
     // Cerca prestiti attivi per utente
