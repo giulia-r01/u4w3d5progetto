@@ -1,4 +1,3 @@
-
 import entities.*;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -27,7 +26,7 @@ public class MainCatalogo {
 
             try {
                 scelta = scanner.nextInt();
-                scanner.nextLine(); // Pulizia buffer
+                scanner.nextLine();
 
                 switch (scelta) {
                     case 1 -> aggiungiElemento(scanner, archivio);
@@ -36,31 +35,17 @@ public class MainCatalogo {
                     case 4 -> cercaPerAnno(scanner, archivio);
                     case 5 -> cercaPerAutore(scanner, archivio);
                     case 6 -> aggiornaElemento(scanner, archivio);
-                    case 7 -> {
-                        System.out.print("Inserisci numero tessera utente: ");
-                        String numeroTessera = scanner.nextLine();
-                        List<Prestito> prestiti = archivio.getPrestitiAttiviPerUtente(numeroTessera);
-                        if (prestiti.isEmpty()) {
-                            System.out.println("Nessun prestito attivo per questa tessera.");
-                        } else {
-                            prestiti.forEach(System.out::println);
-                        }
-                    }
-                    case 8 -> {
-                        List<Prestito> prestitiScaduti = archivio.getPrestitiScadutiNonRestituiti();
-                        if (prestitiScaduti.isEmpty()) {
-                            System.out.println("Nessun prestito scaduto e non restituito.");
-                        } else {
-                            prestitiScaduti.forEach(System.out::println);
-                        }
-                    }
+                    case 7 -> mostraPrestitiAttivi(scanner, archivio);
+                    case 8 -> mostraPrestitiScaduti(archivio);
                     case 9 -> archivio.stampaCatalogo();
                     case 0 -> System.out.println("Uscita dal catalogo bibliotecario.");
                     default -> System.out.println("Scelta non valida, riprova!");
                 }
             } catch (InputMismatchException e) {
-                System.out.println("Carattere non consentito! Assicurati di digitare un numero. Riprova!");
-                scanner.nextLine();
+                System.out.println("Input non valido! Inserisci un numero.");
+                scanner.nextLine(); // reset input
+            } catch (Exception e) {
+                System.out.println("Errore inatteso: " + e.getMessage());
             }
         } while (scelta != 0);
 
@@ -68,52 +53,55 @@ public class MainCatalogo {
     }
 
     private static void aggiungiElemento(Scanner scanner, ArchivioCatalogo archivio) {
-        System.out.println("Scegli tipo di elemento (1=Libro, 2=Rivista): ");
-        int tipo = scanner.nextInt();
-        scanner.nextLine();
+        try {
+            System.out.println("Scegli tipo di elemento (1=Libro, 2=Rivista): ");
+            int tipo = scanner.nextInt();
+            scanner.nextLine();
 
-        System.out.print("ISBN: ");
-        String isbn = scanner.nextLine();
-        System.out.print("Titolo: ");
-        String titolo = scanner.nextLine();
-        System.out.print("Anno pubblicazione: ");
-        int anno = scanner.nextInt();
-        System.out.print("Numero pagine: ");
-        int pagine = scanner.nextInt();
-        scanner.nextLine();
+            System.out.print("ISBN: ");
+            String isbn = scanner.nextLine();
+            System.out.print("Titolo: ");
+            String titolo = scanner.nextLine();
+            System.out.print("Anno pubblicazione: ");
+            int anno = scanner.nextInt();
+            System.out.print("Numero pagine: ");
+            int pagine = scanner.nextInt();
+            scanner.nextLine();
 
-        if (tipo == 1) {
-            System.out.print("Autore: ");
-            String autore = scanner.nextLine();
-            System.out.print("Genere: ");
-            String genere = scanner.nextLine();
-            archivio.aggiungiElemento(new Libro(isbn, titolo, anno, pagine, autore, genere));
-        } else if (tipo == 2) {
-            Rivista.Periodicita periodicita = null;
-            while (periodicita == null) {
-                System.out.print("Periodicità (SETTIMANALE, MENSILE, SEMESTRALE): ");
-                String periodicitaInput = scanner.nextLine().toUpperCase();
-                try {
-                    periodicita = Rivista.Periodicita.valueOf(periodicitaInput);
-                } catch (IllegalArgumentException e) {
-                    System.out.println("Errore: Periodicità non valida. Riprova!");
+            if (tipo == 1) {
+                System.out.print("Autore: ");
+                String autore = scanner.nextLine();
+                System.out.print("Genere: ");
+                String genere = scanner.nextLine();
+                archivio.aggiungiElemento(new Libro(isbn, titolo, anno, pagine, autore, genere));
+            } else if (tipo == 2) {
+                Rivista.Periodicita periodicita = null;
+                while (periodicita == null) {
+                    System.out.print("Periodicità (SETTIMANALE, MENSILE, SEMESTRALE): ");
+                    String input = scanner.nextLine().toUpperCase();
+                    try {
+                        periodicita = Rivista.Periodicita.valueOf(input);
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("Periodicità non valida. Riprova.");
+                    }
                 }
+                archivio.aggiungiElemento(new Rivista(isbn, titolo, anno, pagine, periodicita));
+            } else {
+                System.out.println("Tipo non valido.");
             }
-            archivio.aggiungiElemento(new Rivista(isbn, titolo, anno, pagine, periodicita));
-        } else {
-            System.out.println("Tipo non valido!");
+        } catch (Exception e) {
+            System.out.println("Errore durante l'aggiunta: " + e.getMessage() + " Verifica che l'ISBN sia univoco");
         }
     }
 
     private static void cercaPerIsbn(Scanner scanner, ArchivioCatalogo archivio) {
-        System.out.print("Inserisci ISBN da cercare: ");
-        String isbn = scanner.nextLine();
-
-        ElementoCatalogo elemento = archivio.cercaPerIsbn(isbn);
-        if (elemento != null) {
+        try {
+            System.out.print("Inserisci ISBN da cercare: ");
+            String isbn = scanner.nextLine();
+            ElementoCatalogo elemento = archivio.cercaPerIsbn(isbn);
             System.out.println("Elemento trovato:\n" + elemento);
-        } else {
-            System.out.println("Nessun elemento trovato con ISBN " + isbn);
+        } catch (ElementoNonTrovatoException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -124,22 +112,25 @@ public class MainCatalogo {
     }
 
     private static void cercaPerAnno(Scanner scanner, ArchivioCatalogo archivio) {
-        System.out.print("Inserisci anno di pubblicazione da cercare: ");
-        int anno = scanner.nextInt();
-        scanner.nextLine();
-
-        List<ElementoCatalogo> risultati = archivio.cercaPerAnno(anno);
-        if (risultati.isEmpty()) {
-            System.out.println("Nessun elemento trovato per l’anno: " + anno);
-        } else {
-            risultati.forEach(System.out::println);
+        try {
+            System.out.print("Inserisci anno: ");
+            int anno = scanner.nextInt();
+            scanner.nextLine();
+            List<ElementoCatalogo> risultati = archivio.cercaPerAnno(anno);
+            if (risultati.isEmpty()) {
+                System.out.println("Nessun elemento trovato per l’anno: " + anno);
+            } else {
+                risultati.forEach(System.out::println);
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("Anno non valido.");
+            scanner.nextLine();
         }
     }
 
     private static void cercaPerAutore(Scanner scanner, ArchivioCatalogo archivio) {
-        System.out.print("Inserisci il nome dell'autore: ");
+        System.out.print("Inserisci autore: ");
         String autore = scanner.nextLine();
-
         List<Libro> risultati = archivio.cercaPerAutore(autore);
         if (risultati.isEmpty()) {
             System.out.println("Nessun libro trovato per l'autore: " + autore);
@@ -149,23 +140,69 @@ public class MainCatalogo {
     }
 
     private static void aggiornaElemento(Scanner scanner, ArchivioCatalogo archivio) {
-        System.out.print("Inserisci ISBN dell'elemento da aggiornare: ");
-        String isbn = scanner.nextLine();
+        try {
+            System.out.print("Inserisci ISBN dell'elemento da aggiornare: ");
+            String isbn = scanner.nextLine();
 
-        ElementoCatalogo elementoOriginale = archivio.cercaPerIsbn(isbn);
-        if (elementoOriginale == null) {
-            System.out.println("Errore: Nessun elemento trovato con ISBN " + isbn);
-            return;
+            ElementoCatalogo originale = archivio.cercaPerIsbn(isbn);
+            if (originale == null) {
+                System.out.println("Elemento non trovato.");
+                return;
+            }
+
+            System.out.print("Nuovo titolo: ");
+            String titolo = scanner.nextLine();
+            System.out.print("Nuovo anno: ");
+            int anno = scanner.nextInt();
+            System.out.print("Nuove pagine: ");
+            int pagine = scanner.nextInt();
+            scanner.nextLine();
+
+            ElementoCatalogo nuovo = null;
+            if (originale instanceof Libro) {
+                System.out.print("Nuovo autore: ");
+                String autore = scanner.nextLine();
+                System.out.print("Nuovo genere: ");
+                String genere = scanner.nextLine();
+                nuovo = new Libro(isbn, titolo, anno, pagine, autore, genere);
+            } else if (originale instanceof Rivista) {
+                Rivista.Periodicita periodicita = null;
+                while (periodicita == null) {
+                    System.out.print("Nuova periodicità (SETTIMANALE, MENSILE, SEMESTRALE): ");
+                    try {
+                        periodicita = Rivista.Periodicita.valueOf(scanner.nextLine().toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("Periodicità non valida.");
+                    }
+                }
+                nuovo = new Rivista(isbn, titolo, anno, pagine, periodicita);
+            }
+
+            archivio.aggiornaElemento(isbn, nuovo);
+        } catch (ElementoNonTrovatoException e) {
+            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Errore durante l’aggiornamento: " + e.getMessage());
         }
+    }
 
-        System.out.print("Nuovo titolo: ");
-        String titolo = scanner.nextLine();
-        System.out.print("Nuovo anno di pubblicazione: ");
-        int anno = scanner.nextInt();
-        System.out.print("Nuovo numero di pagine: ");
-        int pagine = scanner.nextInt();
-        scanner.nextLine();
+    private static void mostraPrestitiAttivi(Scanner scanner, ArchivioCatalogo archivio) {
+        System.out.print("Numero tessera utente: ");
+        String tessera = scanner.nextLine();
+        List<Prestito> prestiti = archivio.getPrestitiAttiviPerUtente(tessera);
+        if (prestiti.isEmpty()) {
+            System.out.println("Nessun prestito attivo per questa tessera.");
+        } else {
+            prestiti.forEach(System.out::println);
+        }
+    }
 
-        archivio.aggiornaElemento(isbn, elementoOriginale);
+    private static void mostraPrestitiScaduti(ArchivioCatalogo archivio) {
+        List<Prestito> scaduti = archivio.getPrestitiScadutiNonRestituiti();
+        if (scaduti.isEmpty()) {
+            System.out.println("Nessun prestito scaduto non restituito.");
+        } else {
+            scaduti.forEach(System.out::println);
+        }
     }
 }

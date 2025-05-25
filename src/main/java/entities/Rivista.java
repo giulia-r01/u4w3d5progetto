@@ -17,6 +17,10 @@ public class Rivista extends ElementoCatalogo {
         this.periodicita = periodicita;
     }
 
+    public Rivista() {
+        super();
+    }
+
     public Periodicita getPeriodicita() {
         return periodicita;
     }

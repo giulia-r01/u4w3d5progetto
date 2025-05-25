@@ -4,12 +4,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 
-@NamedQuery(name = "cercaPerAutore", query = "SELECT l FROM Libro l WHERE LOWER(l.autore) = LOWER(:autore)")
+@NamedQuery(name = "cercaPerAutore", query = "SELECT l FROM Libro l WHERE LOWER(l.autore) LIKE LOWER(CONCAT('%', :autore, '%'))")
 @Entity
 @Table(name = "libri")
 public class Libro extends ElementoCatalogo {
     private String autore;
     private String genere;
+
+    public Libro() {
+        super();
+    }
 
     public Libro(String isbn, String titolo, int annoPubblicazione, int numeroPagine, String autore, String genere) {
         super(isbn, titolo, annoPubblicazione, numeroPagine);
@@ -17,7 +21,6 @@ public class Libro extends ElementoCatalogo {
         this.genere = genere;
     }
 
-    public Libro() {}
 
     public String getAutore() { return autore; }
     public String getGenere() { return genere; }
